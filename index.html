@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PrisilBlast - WA Blast Otomatis</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #222; }
+    .logo { font-size: 1.5rem; font-weight: 700; color: #25D366; }
+    .nav-links a { color: #aaa; text-decoration: none; margin-left: 24px; font-size: 0.95rem; }
+    .nav-links a:hover { color: #fff; }
+    .btn { padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
+    .btn-green { background: #25D366; color: #000; }
+    .btn-outline { background: transparent; border: 1px solid #444; color: #fff; }
+    .hero { text-align: center; padding: 100px 20px 60px; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; }
+    .hero h1 span { color: #25D366; }
+    .hero p { font-size: 1.2rem; color: #aaa; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
+    .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
+    .feature-card { background: #1a1a2e; border: 1px solid #222; border-radius: 16px; padding: 28px; }
+    .feature-icon { font-size: 2rem; margin-bottom: 12px; }
+    .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
+    .feature-card p { color: #888; font-size: 0.9rem; line-height: 1.6; }
+    .pricing { text-align: center; padding: 60px 20px; background: #111; }
+    .pricing h2 { font-size: 2rem; margin-bottom: 12px; }
+    .pricing p { color: #888; margin-bottom: 40px; }
+    .price-cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
+    .price-card { background: #1a1a2e; border: 1px solid #333; border-radius: 16px; padding: 32px 28px; min-width: 220px; }
+    .price-card.popular { border-color: #25D366; position: relative; }
+    .price-card.popular::before { content: "⭐ Populer"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #25D366; color: #000; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+    .price-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: #aaa; }
+    .price-card .price { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
+    .price-card .price span { font-size: 1rem; color: #aaa; font-weight: 400; }
+    .price-card ul { list-style: none; margin: 20px 0; text-align: left; }
+    .price-card ul li { color: #ccc; font-size: 0.9rem; margin-bottom: 8px; }
+    .price-card ul li::before { content: "✓ "; color: #25D366; }
+    .cta { text-align: center; padding: 80px 20px; }
+    .cta h2 { font-size: 2rem; margin-bottom: 16px; }
+    .cta p { color: #888; margin-bottom: 32px; }
+    footer { text-align: center; padding: 24px; color: #555; border-top: 1px solid #222; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">📤 PrisilBlast</div>
+    <div class="nav-links">
+      <a href="#fitur">Fitur</a>
+      <a href="#harga">Harga</a>
+      <a href="/login">Login</a>
+      <a href="/register"><button class="btn btn-green">Mulai Gratis</button></a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h1>WA Blast <span>Otomatis</span><br/>Tanpa Ribet</h1>
+    <p>Kirim pesan WhatsApp ke ribuan kontak sekaligus. Scan QR sekali, upload kontak, langsung blast!</p>
+    <div class="hero-btns">
+      <a href="/register"><button class="btn btn-green">🚀 Coba Gratis</button></a>
+      <a href="#harga"><button class="btn btn-outline">Lihat Harga</button></a>
+    </div>
+  </section>
+
+  <section class="features" id="fitur">
+    <div class="feature-card">
+      <div class="feature-icon">📱</div>
+      <h3>Scan QR Sekali</h3>
+      <p>Hubungkan nomor WA kamu dengan scan QR. Session tersimpan otomatis, tidak perlu scan ulang.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📋</div>
+      <h3>Upload Kontak CSV</h3>
+      <p>Upload file kontak dari Excel atau Google Sheet. Sistem otomatis bersihkan nomor duplikat.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">✍️</div>
+      <h3>Template Pesan</h3>
+      <p>Buat template dengan nama penerima otomatis terisi. Pesan terasa personal, tidak seperti spam.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">⚡</div>
+      <h3>Blast Otomatis</h3>
+      <p>Klik start dan tinggal pergi. Sistem kirim otomatis dengan delay aman anti-banned.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">📊</div>
+      <h3>Laporan Real-time</h3>
+      <p>Pantau progress blast langsung dari dashboard. Lihat berapa yang terkirim dan gagal.</p>
+    </div>
+    <div class="feature-card">
+      <div class="feature-icon">🔒</div>
+      <h3>Aman & Terpercaya</h3>
+      <p>Delay otomatis anti-banned. Session tersimpan aman di server terenkripsi.</p>
+    </div>
+  </section>
+
+  <section class="pricing" id="harga">
+    <h2>Harga Terjangkau</h2>
+    <p>Mulai gratis, upgrade kapan saja</p>
+    <div class="price-cards">
+      <div class="price-card">
+        <h3>Free</h3>
+        <div class="price">Rp0 <span>/bulan</span></div>
+        <ul>
+          <li>50 pesan/hari</li>
+          <li>1 nomor WA</li>
+          <li>Upload CSV</li>
+          <li>Template dasar</li>
+        </ul>
+        <a href="/register"><button class="btn btn-outline" style="width:100%">Mulai Gratis</button></a>
+      </div>
+      <div class="price-card popular">
+        <h3>Starter</h3>
+        <div class="price">Rp49K <span>/bulan</span></div>
+        <ul>
+          <li>500 pesan/hari</li>
+          <li>2 nomor WA</li>
+          <li>Upload CSV tak terbatas</li>
+          <li>Template kustom</li>
+          <li>Laporan detail</li>
+        </ul>
+        <a href="/register"><button class="btn btn-green" style="width:100%">Pilih Starter</button></a>
+      </div>
+      <div class="price-card">
+        <h3>Pro</h3>
+        <div class="price">Rp149K <span>/bulan</span></div>
+        <ul>
+          <li>Unlimited pesan</li>
+          <li>5 nomor WA</li>
+          <li>Multi kampanye</li>
+          <li>Jadwal blast</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="/register"><button class="btn btn-outline" style="width:100%">Pilih Pro</button></a>
+      </div>
+    </div>
+  </section>
+
+  <section class="cta">
+    <h2>Siap Blast Sekarang?</h2>
+    <p>Daftar gratis, tidak perlu kartu kredit</p>
+    <a href="/register"><button class="btn btn-green" style="font-size:1.1rem; padding:14px 40px;">🚀 Daftar Sekarang</button></a>
+  </section>
+
+  <footer>
+    © 2026 PrisilBlast — Powered by Prisil AI · <a href="/login" style="color:#25D366">Login</a>
+  </footer>
+</body>
+</html>

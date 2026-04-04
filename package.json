@@ -1,0 +1,9 @@
+{
+  "name": "prisilblast",
+  "version": "1.0.0",
+  "description": "PrisilBlast - WA Blast Platform",
+  "dependencies": {
+    "@upstash/redis": "^1.28.0",
+    "jsonwebtoken": "^9.0.2"
+  }
+}

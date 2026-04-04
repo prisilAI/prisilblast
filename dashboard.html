@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Dashboard - PrisilBlast</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; border-bottom: 1px solid #222; }
+    .logo { font-size: 1.3rem; font-weight: 700; color: #25D366; }
+    .nav-right { display: flex; align-items: center; gap: 16px; }
+    .user-email { color: #888; font-size: 0.85rem; }
+    .btn-logout { background: transparent; border: 1px solid #444; color: #aaa; padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
+    .container { max-width: 900px; margin: 0 auto; padding: 32px 20px; }
+    h1 { font-size: 1.6rem; margin-bottom: 8px; }
+    .subtitle { color: #888; margin-bottom: 32px; }
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 32px; }
+    .step-card { background: #1a1a2e; border: 1px solid #333; border-radius: 16px; padding: 24px; }
+    .step-num { width: 32px; height: 32px; background: #25D366; color: #000; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.9rem; margin-bottom: 12px; }
+    .step-card h3 { font-size: 1rem; margin-bottom: 6px; }
+    .step-card p { color: #888; font-size: 0.85rem; }
+    .panel { background: #1a1a2e; border: 1px solid #333; border-radius: 16px; padding: 28px; margin-bottom: 24px; }
+    .panel h2 { font-size: 1.1rem; margin-bottom: 20px; padding-bottom: 12px; border-bottom: 1px solid #333; }
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.85rem; color: #aaa; margin-bottom: 6px; }
+    input, textarea, select { width: 100%; padding: 11px 14px; background: #0f1117; border: 1px solid #333; border-radius: 10px; color: #fff; font-size: 0.9rem; outline: none; font-family: inherit; }
+    input:focus, textarea:focus { border-color: #25D366; }
+    textarea { resize: vertical; min-height: 120px; }
+    .btn { padding: 11px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; }
+    .btn-green { background: #25D366; color: #000; }
+    .btn-outline { background: transparent; border: 1px solid #444; color: #fff; }
+    .btn-red { background: #c0392b; color: #fff; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    .qr-area { text-align: center; padding: 20px; }
+    .qr-area img { max-width: 200px; border-radius: 12px; border: 3px solid #25D366; }
+    .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
+    .badge-connected { background: #1a2e1a; color: #25D366; border: 1px solid #25D366; }
+    .badge-disconnected { background: #2d1515; color: #e74c3c; border: 1px solid #c0392b; }
+    .badge-waiting { background: #2d2515; color: #f39c12; border: 1px solid #f39c12; }
+    .progress-bar { background: #333; border-radius: 10px; height: 8px; margin: 10px 0; }
+    .progress-fill { height: 100%; background: #25D366; border-radius: 10px; transition: width 0.5s; }
+    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .stat { text-align: center; background: #0f1117; border-radius: 10px; padding: 14px; }
+    .stat-num { font-size: 1.5rem; font-weight: 700; }
+    .stat-label { font-size: 0.75rem; color: #888; }
+    .green { color: #25D366; }
+    .red { color: #e74c3c; }
+    .yellow { color: #f39c12; }
+    .hint { font-size: 0.8rem; color: #666; margin-top: 6px; }
+    .row { display: flex; gap: 12px; align-items: flex-end; flex-wrap: wrap; }
+    .row .form-group { flex: 1; min-width: 200px; }
+  </style>
+</head>
+<body>
+  <nav>
+    <div class="logo">📤 PrisilBlast</div>
+    <div class="nav-right">
+      <span class="user-email" id="userEmail"></span>
+      <button class="btn-logout" onclick="logout()">Logout</button>
+    </div>
+  </nav>
+
+  <div class="container">
+    <h1>Dashboard</h1>
+    <p class="subtitle">Kelola blast WhatsApp kamu</p>
+
+    <!-- Step Guide -->
+    <div class="steps">
+      <div class="step-card">
+        <div class="step-num">1</div>
+        <h3>Hubungkan WA</h3>
+        <p>Masukkan nomor & scan QR untuk login WhatsApp</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">2</div>
+        <h3>Upload Kontak</h3>
+        <p>Upload file CSV berisi nama & nomor penerima</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">3</div>
+        <h3>Buat Template</h3>
+        <p>Tulis pesan dengan {nama} untuk personalisasi</p>
+      </div>
+      <div class="step-card">
+        <div class="step-num">4</div>
+        <h3>Start Blast!</h3>
+        <p>Klik blast dan pantau progress realtime</p>
+      </div>
+    </div>
+
+    <!-- Koneksi WA -->
+    <div class="panel">
+      <h2>📱 Koneksi WhatsApp</h2>
+      <div class="row">
+        <div class="form-group">
+          <label>Nomor WhatsApp (dengan kode negara)</label>
+          <input type="text" id="nomorWA" placeholder="62822xxxxxxxx"/>
+          <div class="hint">Contoh: 6281234567890 (tanpa + dan spasi)</div>
+        </div>
+        <div class="form-group" style="flex: 0">
+          <button class="btn btn-green" onclick="connectWA()">🔗 Hubungkan</button>
+        </div>
+      </div>
+      <div id="qrArea" class="qr-area" style="display:none">
+        <p style="color:#aaa; margin-bottom:12px;">Scan QR ini dengan WhatsApp kamu</p>
+        <img id="qrImg" src="" alt="QR Code"/>
+        <p style="color:#f39c12; margin-top:12px; font-size:0.85rem;">⏳ Menunggu scan...</p>
+      </div>
+      <div id="waStatus" style="margin-top:12px">
+        <span class="status-badge badge-disconnected">● Belum Terhubung</span>
+      </div>
+    </div>
+
+    <!-- Upload Kontak -->
+    <div class="panel">
+      <h2>📋 Upload Kontak</h2>
+      <div class="form-group">
+        <label>File CSV (kolom: nama, nomor)</label>
+        <input type="file" id="csvFile" accept=".csv"/>
+        <div class="hint">Format: baris pertama header atau langsung data. Kolom 1=nama, Kolom 2=nomor WA</div>
+      </div>
+      <button class="btn btn-green" onclick="uploadCSV()">📤 Upload Kontak</button>
+      <div id="csvStatus" style="margin-top:12px; color:#888; font-size:0.9rem;"></div>
+    </div>
+
+    <!-- Template Pesan -->
+    <div class="panel">
+      <h2>✍️ Template Pesan</h2>
+      <div class="form-group">
+        <label>Pesan (gunakan {nama} untuk nama penerima)</label>
+        <textarea id="templatePesan" placeholder="Halo {nama}, ada promo spesial untuk kamu! ..."></textarea>
+        <div class="hint">Contoh: "Halo {nama}, cek promo terbaru dari kami 🎉"</div>
+      </div>
+    </div>
+
+    <!-- Blast Control -->
+    <div class="panel">
+      <h2>🚀 Kontrol Blast</h2>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-num green" id="statSent">0</div>
+          <div class="stat-label">Terkirim</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num red" id="statFailed">0</div>
+          <div class="stat-label">Gagal</div>
+        </div>
+        <div class="stat">
+          <div class="stat-num yellow" id="statTotal">0</div>
+          <div class="stat-label">Total</div>
+        </div>
+      </div>
+      <div class="progress-bar">
+        <div class="progress-fill" id="progressFill" style="width:0%"></div>
+      </div>
+      <div style="color:#888; font-size:0.85rem; margin-bottom:16px;" id="progressText">Belum ada blast aktif</div>
+      <div style="display:flex; gap:12px; flex-wrap:wrap;">
+        <button class="btn btn-green" id="btnBlast" onclick="startBlast()">🚀 Start Blast</button>
+        <button class="btn btn-outline" id="btnPause" onclick="pauseBlast()" style="display:none">⏸ Pause</button>
+        <button class="btn btn-red" id="btnStop" onclick="stopBlast()" style="display:none">⏹ Stop</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const token = localStorage.getItem('pb_token');
+    const email = localStorage.getItem('pb_email');
+    if (!token) window.location.href = '/login';
+
+    document.getElementById('userEmail').textContent = email;
+
+    let pollInterval;
+    let sessionId;
+
+    function logout() {
+      localStorage.clear();
+      window.location.href = '/login';
+    }
+
+    async function connectWA() {
+      const nomor = document.getElementById('nomorWA').value.trim();
+      if (!nomor) return alert('Masukkan nomor WA dulu!');
+
+      try {
+        const res = await fetch('/api/connect-wa', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ nomor })
+        });
+        const data = await res.json();
+        if (data.success) {
+          sessionId = data.sessionId;
+          document.getElementById('qrArea').style.display = 'block';
+          document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-waiting">⏳ Menunggu Scan QR</span>';
+          pollQR();
+        } else {
+          alert(data.error || 'Gagal connect WA');
+        }
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    async function pollQR() {
+      const interval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/qr-status?sessionId=' + sessionId, {
+            headers: { 'Authorization': 'Bearer ' + token }
+          });
+          const data = await res.json();
+          if (data.qrUrl) {
+            document.getElementById('qrImg').src = data.qrUrl;
+          }
+          if (data.status === 'connected') {
+            clearInterval(interval);
+            document.getElementById('qrArea').style.display = 'none';
+            document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-connected">✅ Terhubung</span>';
+          }
+        } catch(e) {}
+      }, 3000);
+    }
+
+    async function uploadCSV() {
+      const file = document.getElementById('csvFile').files[0];
+      if (!file) return alert('Pilih file CSV dulu!');
+
+      const formData = new FormData();
+      formData.append('csv', file);
+
+      const statusEl = document.getElementById('csvStatus');
+      statusEl.textContent = '📤 Mengupload...';
+
+      try {
+        const res = await fetch('/api/upload-contacts', {
+          method: 'POST',
+          headers: { 'Authorization': 'Bearer ' + token },
+          body: formData
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusEl.textContent = `✅ ${data.total} kontak berhasil diupload`;
+          statusEl.style.color = '#25D366';
+          document.getElementById('statTotal').textContent = data.total;
+        } else {
+          statusEl.textContent = '❌ ' + (data.error || 'Gagal upload');
+          statusEl.style.color = '#e74c3c';
+        }
+      } catch(e) {
+        statusEl.textContent = '❌ Error: ' + e.message;
+        statusEl.style.color = '#e74c3c';
+      }
+    }
+
+    async function startBlast() {
+      const template = document.getElementById('templatePesan').value.trim();
+      if (!template) return alert('Isi template pesan dulu!');
+      if (!sessionId) return alert('Hubungkan WhatsApp dulu!');
+
+      try {
+        const res = await fetch('/api/start-blast', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+          body: JSON.stringify({ sessionId, template })
+        });
+        const data = await res.json();
+        if (data.success) {
+          document.getElementById('btnBlast').style.display = 'none';
+          document.getElementById('btnPause').style.display = 'inline-block';
+          document.getElementById('btnStop').style.display = 'inline-block';
+          startPolling();
+        } else {
+          alert(data.error || 'Gagal start blast');
+        }
+      } catch(e) {
+        alert('Error: ' + e.message);
+      }
+    }
+
+    function startPolling() {
+      pollInterval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/blast-status?sessionId=' + sessionId, {
+            headers: { 'Authorization': 'Bearer ' + token }
+          });
+          const data = await res.json();
+          document.getElementById('statSent').textContent = data.sent || 0;
+          document.getElementById('statFailed').textContent = data.failed || 0;
+          document.getElementById('statTotal').textContent = data.total || 0;
+          const pct = data.total > 0 ? Math.round((data.sent / data.total) * 100) : 0;
+          document.getElementById('progressFill').style.width = pct + '%';
+          document.getElementById('progressText').textContent = `${data.sent}/${data.total} terkirim (${pct}%)`;
+          if (data.status === 'done') {
+            clearInterval(pollInterval);
+            document.getElementById('progressText').textContent = '✅ Blast selesai!';
+          }
+        } catch(e) {}
+      }, 5000);
+    }
+
+    async function pauseBlast() {
+      await fetch('/api/pause-blast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ sessionId })
+      });
+    }
+
+    async function stopBlast() {
+      if (!confirm('Yakin mau stop blast?')) return;
+      await fetch('/api/stop-blast', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + token },
+        body: JSON.stringify({ sessionId })
+      });
+      clearInterval(pollInterval);
+      document.getElementById('btnBlast').style.display = 'inline-block';
+      document.getElementById('btnPause').style.display = 'none';
+      document.getElementById('btnStop').style.display = 'none';
+    }
+  </script>
+</body>
+</html>

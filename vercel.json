@@ -5,11 +5,16 @@
       "maxDuration": 30
     }
   },
+  "rewrites": [
+    { "source": "/api/saweria-webhook", "destination": "/api/saweria-webhook" }
+  ],
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
     { "src": "/dashboard", "dest": "/dashboard.html" },
     { "src": "/login", "dest": "/login.html" },
     { "src": "/register", "dest": "/register.html" },
+    { "src": "/upgrade", "dest": "/upgrade.html" },
+    { "src": "/admin", "dest": "/admin.html" },
     { "src": "/", "dest": "/index.html" }
   ]
 }

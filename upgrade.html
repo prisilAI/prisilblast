@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Upgrade - Infinity SenderBlast</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #04040f; color: #fff; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+    .container { max-width: 560px; width: 100%; }
+    .logo { text-align: center; font-size: 1.2rem; font-weight: 800; background: linear-gradient(135deg, #1a6fdb, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; margin-bottom: 32px; }
+    h1 { text-align: center; font-size: 1.8rem; font-weight: 800; margin-bottom: 8px; }
+    .sub { text-align: center; color: #64748b; margin-bottom: 40px; }
+
+    .plans { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 32px; }
+    .plan { background: rgba(255,255,255,0.03); border: 2px solid rgba(255,255,255,0.08); border-radius: 16px; padding: 20px; cursor: pointer; transition: all 0.2s; }
+    .plan:hover, .plan.active { border-color: #1a6fdb; background: rgba(26,111,219,0.08); }
+    .plan h3 { font-size: 1rem; font-weight: 700; margin-bottom: 4px; }
+    .plan .price { font-size: 1.4rem; font-weight: 900; background: linear-gradient(135deg, #1a6fdb, #c084fc); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .plan ul { list-style: none; margin-top: 10px; }
+    .plan ul li { color: #94a3b8; font-size: 0.8rem; margin-bottom: 4px; }
+    .plan ul li::before { content: "✓ "; color: #60a5fa; }
+
+    .card { background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.08); border-radius: 20px; padding: 28px; }
+    .card h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 20px; }
+    .step-item { display: flex; gap: 16px; margin-bottom: 20px; }
+    .step-badge { width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #1a6fdb, #8a2be2); display: flex; align-items: center; justify-content: center; font-size: 0.8rem; font-weight: 700; flex-shrink: 0; }
+    .step-content h4 { font-size: 0.9rem; font-weight: 600; margin-bottom: 4px; }
+    .step-content p { color: #64748b; font-size: 0.85rem; line-height: 1.5; }
+    
+    .btn-lynk { display: block; width: 100%; padding: 16px; background: linear-gradient(135deg, #1a6fdb, #8a2be2); color: #fff; border: none; border-radius: 12px; font-size: 1rem; font-weight: 700; cursor: pointer; text-align: center; text-decoration: none; margin: 20px 0; transition: opacity 0.2s; }
+    .btn-lynk:hover { opacity: 0.85; }
+
+    .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; }
+    .divider hr { flex: 1; border: none; border-top: 1px solid rgba(255,255,255,0.08); }
+    .divider span { color: #475569; font-size: 0.8rem; }
+
+    .form-group { margin-bottom: 16px; }
+    label { display: block; font-size: 0.85rem; color: #94a3b8; margin-bottom: 6px; }
+    input { width: 100%; padding: 12px 16px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; color: #fff; font-size: 0.95rem; outline: none; font-family: inherit; }
+    input:focus { border-color: #1a6fdb; }
+    .btn-submit { width: 100%; padding: 13px; background: rgba(26,111,219,0.2); border: 1px solid rgba(26,111,219,0.4); color: #60a5fa; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.2s; }
+    .btn-submit:hover { background: rgba(26,111,219,0.3); }
+    .alert { padding: 12px 16px; border-radius: 10px; font-size: 0.9rem; margin-top: 12px; display: none; }
+    .alert-success { background: rgba(26,111,219,0.15); border: 1px solid rgba(26,111,219,0.3); color: #60a5fa; }
+    .alert-error { background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); color: #f87171; }
+    .back { text-align: center; margin-top: 20px; color: #475569; font-size: 0.85rem; }
+    .back a { color: #60a5fa; text-decoration: none; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="logo">∞ INFINITY SENDERBLAST</div>
+    <h1>Upgrade Akun</h1>
+    <p class="sub">Pilih paket dan ikuti langkah pembayaran</p>
+
+    <!-- Pilih Paket -->
+    <div class="plans">
+      <div class="plan active" onclick="selectPlan('starter', 'Rp49.000')">
+        <h3>🚀 Starter</h3>
+        <div class="price">Rp49K</div>
+        <ul>
+          <li>500 pesan/hari</li>
+          <li>2 nomor WA</li>
+          <li>Laporan detail</li>
+        </ul>
+      </div>
+      <div class="plan" onclick="selectPlan('pro', 'Rp149.000')">
+        <h3>💎 Pro</h3>
+        <div class="price">Rp149K</div>
+        <ul>
+          <li>Unlimited pesan</li>
+          <li>5 nomor WA</li>
+          <li>Priority support</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Cara Bayar -->
+    <div class="card">
+      <h2>📋 Cara Pembayaran</h2>
+      
+      <div class="step-item">
+        <div class="step-badge">1</div>
+        <div class="step-content">
+          <h4>Bayar via Lynk.id</h4>
+          <p>Klik tombol di bawah, transfer sesuai paket yang dipilih (<span id="selectedPriceText">Rp49.000</span> untuk Starter)</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-badge">2</div>
+        <div class="step-content">
+          <h4>Catat Bukti Transfer</h4>
+          <p>Screenshot atau catat nomor referensi transfer kamu</p>
+        </div>
+      </div>
+
+      <div class="step-item">
+        <div class="step-badge">3</div>
+        <div class="step-content">
+          <h4>Submit Bukti di Bawah</h4>
+          <p>Masukkan email akun + nomor referensi. Tim kami upgrade dalam 1x24 jam</p>
+        </div>
+      </div>
+
+      <a href="https://lynk.id/prisilai" target="_blank" class="btn-lynk" id="btnLynk">
+        💳 Bayar Rp49.000 via Lynk.id →
+      </a>
+
+      <div class="divider"><hr/><span>Sudah bayar? Submit di sini</span><hr/></div>
+
+      <div class="form-group">
+        <label>Paket yang dipilih</label>
+        <input type="text" id="selectedPlanInput" value="Starter - Rp49.000" readonly style="color:#60a5fa;"/>
+      </div>
+      <div class="form-group">
+        <label>Email akun kamu</label>
+        <input type="email" id="emailInput" placeholder="email@kamu.com"/>
+      </div>
+      <div class="form-group">
+        <label>Nomor Referensi / Bukti Transfer</label>
+        <input type="text" id="refInput" placeholder="Contoh: TRF2026040512345"/>
+      </div>
+      <button class="btn-submit" onclick="submitPayment()">✅ Submit Bukti Pembayaran</button>
+      <div class="alert alert-success" id="alertOk"></div>
+      <div class="alert alert-error" id="alertErr"></div>
+    </div>
+
+    <div class="back"><a href="/dashboard">← Kembali ke Dashboard</a></div>
+  </div>
+
+  <script>
+    let selectedPlan = 'starter';
+    const token = localStorage.getItem('pb_token');
+    const email = localStorage.getItem('pb_email');
+    if (email) document.getElementById('emailInput').value = email;
+
+    function selectPlan(plan, price) {
+      selectedPlan = plan;
+      document.querySelectorAll('.plan').forEach(p => p.classList.remove('active'));
+      event.currentTarget.classList.add('active');
+      const priceNum = plan === 'starter' ? '49.000' : '149.000';
+      document.getElementById('selectedPriceText').textContent = `Rp${priceNum}`;
+      document.getElementById('btnLynk').textContent = `💳 Bayar Rp${priceNum} via Lynk.id →`;
+      document.getElementById('selectedPlanInput').value = `${plan === 'starter' ? 'Starter' : 'Pro'} - Rp${priceNum}`;
+    }
+
+    async function submitPayment() {
+      const email = document.getElementById('emailInput').value.trim();
+      const ref = document.getElementById('refInput').value.trim();
+      const okEl = document.getElementById('alertOk');
+      const errEl = document.getElementById('alertErr');
+      okEl.style.display = 'none'; errEl.style.display = 'none';
+
+      if (!email || !ref) {
+        errEl.textContent = 'Email dan nomor referensi wajib diisi!';
+        errEl.style.display = 'block'; return;
+      }
+
+      try {
+        const res = await fetch('/api/submit-payment', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, plan: selectedPlan, ref })
+        });
+        const data = await res.json();
+        if (data.success) {
+          okEl.textContent = '✅ Bukti pembayaran diterima! Verifikasi dalam 1x24 jam. Kami akan mengupgrade akun kamu segera.';
+          okEl.style.display = 'block';
+        } else {
+          errEl.textContent = data.error || 'Gagal submit';
+          errEl.style.display = 'block';
+        }
+      } catch(e) {
+        errEl.textContent = 'Error: ' + e.message;
+        errEl.style.display = 'block';
+      }
+    }
+  </script>
+</body>
+</html>

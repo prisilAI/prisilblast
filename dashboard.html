@@ -3,12 +3,12 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Dashboard - PrisilBlast</title>
+  <title>Dashboard - Infinity SenderBlast</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
     body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; min-height: 100vh; }
     nav { display: flex; justify-content: space-between; align-items: center; padding: 16px 32px; border-bottom: 1px solid #222; }
-    .logo { font-size: 1.3rem; font-weight: 700; color: #25D366; }
+    .logo { font-size: 1.3rem; font-weight: 700; background: linear-gradient(135deg, #1a6fdb, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .nav-right { display: flex; align-items: center; gap: 16px; }
     .user-email { color: #888; font-size: 0.85rem; }
     .btn-logout { background: transparent; border: 1px solid #444; color: #aaa; padding: 6px 16px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; }
@@ -28,18 +28,18 @@
     input:focus, textarea:focus { border-color: #25D366; }
     textarea { resize: vertical; min-height: 120px; }
     .btn { padding: 11px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 0.9rem; }
-    .btn-green { background: #25D366; color: #000; }
-    .btn-outline { background: transparent; border: 1px solid #444; color: #fff; }
+    .btn-green { background: linear-gradient(135deg, #1a6fdb, #8a2be2); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
     .btn-red { background: #c0392b; color: #fff; }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; }
     .qr-area { text-align: center; padding: 20px; }
     .qr-area img { max-width: 200px; border-radius: 12px; border: 3px solid #25D366; }
     .status-badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; }
-    .badge-connected { background: #1a2e1a; color: #25D366; border: 1px solid #25D366; }
+    .badge-connected { background: #0d1a3a; color: #1a6fdb; border: 1px solid #1a6fdb; }
     .badge-disconnected { background: #2d1515; color: #e74c3c; border: 1px solid #c0392b; }
     .badge-waiting { background: #2d2515; color: #f39c12; border: 1px solid #f39c12; }
     .progress-bar { background: #333; border-radius: 10px; height: 8px; margin: 10px 0; }
-    .progress-fill { height: 100%; background: #25D366; border-radius: 10px; transition: width 0.5s; }
+    .progress-fill { height: 100%; background: linear-gradient(135deg, #1a6fdb, #8a2be2); border-radius: 10px; transition: width 0.5s; }
     .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
     .stat { text-align: center; background: #0f1117; border-radius: 10px; padding: 14px; }
     .stat-num { font-size: 1.5rem; font-weight: 700; }
@@ -54,7 +54,7 @@
 </head>
 <body>
   <nav>
-    <div class="logo">📤 PrisilBlast</div>
+    <div class="logo">∞ INFINITY SENDERBLAST</div>
     <div class="nav-right">
       <span class="user-email" id="userEmail"></span>
       <button class="btn-logout" onclick="logout()">Logout</button>

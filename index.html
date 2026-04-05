@@ -3,49 +3,49 @@
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>PrisilBlast - WA Blast Otomatis</title>
+  <title>Infinity SenderBlast - WA Blast Otomatis</title>
   <style>
     * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Segoe UI', sans-serif; background: #0f1117; color: #fff; min-height: 100vh; }
-    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #222; }
-    .logo { font-size: 1.5rem; font-weight: 700; color: #25D366; }
+    body { font-family: 'Segoe UI', sans-serif; background: #050510; color: #fff; min-height: 100vh; }
+    nav { display: flex; justify-content: space-between; align-items: center; padding: 20px 40px; border-bottom: 1px solid #1a1a3a; }
+    .logo { font-size: 1.5rem; font-weight: 700; background: linear-gradient(135deg, #1a6fdb, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .nav-links a { color: #aaa; text-decoration: none; margin-left: 24px; font-size: 0.95rem; }
     .nav-links a:hover { color: #fff; }
     .btn { padding: 10px 24px; border-radius: 8px; font-weight: 600; cursor: pointer; border: none; }
-    .btn-green { background: #25D366; color: #000; }
-    .btn-outline { background: transparent; border: 1px solid #444; color: #fff; }
+    .btn-green { background: linear-gradient(135deg, #1a6fdb, #8a2be2); color: #fff; }
+    .btn-outline { background: transparent; border: 1px solid #333; color: #fff; }
     .hero { text-align: center; padding: 100px 20px 60px; }
     .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 20px; }
-    .hero h1 span { color: #25D366; }
+    .hero h1 span { background: linear-gradient(135deg, #1a6fdb, #8a2be2); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     .hero p { font-size: 1.2rem; color: #aaa; margin-bottom: 40px; max-width: 600px; margin-left: auto; margin-right: auto; }
     .hero-btns { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
     .features { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 24px; padding: 60px 40px; max-width: 1100px; margin: 0 auto; }
-    .feature-card { background: #1a1a2e; border: 1px solid #222; border-radius: 16px; padding: 28px; }
+    .feature-card { background: #0d0d2e; border: 1px solid #1a1a3a; border-radius: 16px; padding: 28px; }
     .feature-icon { font-size: 2rem; margin-bottom: 12px; }
     .feature-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
     .feature-card p { color: #888; font-size: 0.9rem; line-height: 1.6; }
-    .pricing { text-align: center; padding: 60px 20px; background: #111; }
+    .pricing { text-align: center; padding: 60px 20px; background: #080818; }
     .pricing h2 { font-size: 2rem; margin-bottom: 12px; }
     .pricing p { color: #888; margin-bottom: 40px; }
     .price-cards { display: flex; gap: 24px; justify-content: center; flex-wrap: wrap; }
-    .price-card { background: #1a1a2e; border: 1px solid #333; border-radius: 16px; padding: 32px 28px; min-width: 220px; }
-    .price-card.popular { border-color: #25D366; position: relative; }
-    .price-card.popular::before { content: "⭐ Populer"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: #25D366; color: #000; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
+    .price-card { background: #0d0d2e; border: 1px solid #1a1a3a; border-radius: 16px; padding: 32px 28px; min-width: 220px; }
+    .price-card.popular { border-color: #1a6fdb; position: relative; }
+    .price-card.popular::before { content: "⭐ Populer"; position: absolute; top: -12px; left: 50%; transform: translateX(-50%); background: linear-gradient(135deg, #1a6fdb, #8a2be2); color: #fff; font-size: 0.75rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; }
     .price-card h3 { font-size: 1.1rem; margin-bottom: 12px; color: #aaa; }
     .price-card .price { font-size: 2rem; font-weight: 800; color: #fff; margin-bottom: 4px; }
     .price-card .price span { font-size: 1rem; color: #aaa; font-weight: 400; }
     .price-card ul { list-style: none; margin: 20px 0; text-align: left; }
     .price-card ul li { color: #ccc; font-size: 0.9rem; margin-bottom: 8px; }
-    .price-card ul li::before { content: "✓ "; color: #25D366; }
+    .price-card ul li::before { content: "✓ "; color: #1a6fdb; }
     .cta { text-align: center; padding: 80px 20px; }
     .cta h2 { font-size: 2rem; margin-bottom: 16px; }
     .cta p { color: #888; margin-bottom: 32px; }
-    footer { text-align: center; padding: 24px; color: #555; border-top: 1px solid #222; font-size: 0.85rem; }
+    footer { text-align: center; padding: 24px; color: #555; border-top: 1px solid #1a1a3a; font-size: 0.85rem; }
   </style>
 </head>
 <body>
   <nav>
-    <div class="logo">📤 PrisilBlast</div>
+    <div class="logo">∞ INFINITY SENDERBLAST</div>
     <div class="nav-links">
       <a href="#fitur">Fitur</a>
       <a href="#harga">Harga</a>
@@ -55,7 +55,7 @@
   </nav>
 
   <section class="hero">
-    <h1>WA Blast <span>Otomatis</span><br/>Tanpa Ribet</h1>
+    <h1>WA Blast <span>Tanpa Batas</span><br/>Tanpa Ribet</h1>
     <p>Kirim pesan WhatsApp ke ribuan kontak sekaligus. Scan QR sekali, upload kontak, langsung blast!</p>
     <div class="hero-btns">
       <a href="/register"><button class="btn btn-green">🚀 Coba Gratis</button></a>
@@ -145,7 +145,7 @@
   </section>
 
   <footer>
-    © 2026 PrisilBlast — Powered by Prisil AI · <a href="/login" style="color:#25D366">Login</a>
+    © 2026 Infinity SenderBlast — WA Blast Tanpa Batas · <a href="/login" style="color:#1a6fdb">Login</a>
   </footer>
 </body>
 </html>

@@ -27,6 +27,8 @@ def verify_secret(req):
 
 def run_cmd(cmd):
     result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
+    if result.returncode != 0 and result.stderr:
+        print(f"[CMD ERROR] {cmd[:80]}: {result.stderr.strip()[:200]}")
     return result.stdout.strip(), result.returncode
 
 def upload_to_cloudinary(image_path, public_id):
@@ -57,36 +59,83 @@ def get_volume_name(user_id):
     return f"pb_vol_{hashlib.md5(user_id.encode()).hexdigest()[:8]}"
 
 def poll_qr(session_id, user_id, contacts_file, template):
-    """Background thread: poll QR dan update status"""
+    """Background thread: poll QR dan update status dari container"""
     container = get_container_name(user_id)
+    qr_path = f"/tmp/wa_qr_{session_id}.png"
+    status_file = f"/tmp/wa_status_{session_id}.json"
     
-    for i in range(60):  # max 5 menit
+    for i in range(120):  # max 10 menit
         time.sleep(5)
         
-        # Screenshot dari container
-        screenshot_path = f"/tmp/qr_{session_id}.png"
-        out, code = run_cmd(f"docker exec {container} python3 -c \"\nimport sys; sys.path.insert(0,'/app')\nfrom playwright.sync_api import sync_playwright\nimport time\nwith sync_playwright() as p:\n    ctx = p.chromium.connect_over_cdp('http://localhost:9222') if False else None\n\" 2>/dev/null; docker cp {container}:/tmp/wa_debug.png {screenshot_path} 2>/dev/null")
+        # Copy QR screenshot dari container
+        run_cmd(f"docker cp {container}:/app/wa_qr.png {qr_path} 2>/dev/null")
         
-        if os.path.exists(screenshot_path):
-            # Upload ke Cloudinary
-            url = upload_to_cloudinary(screenshot_path, f"qr_{session_id}")
+        if os.path.exists(qr_path):
+            url = upload_to_cloudinary(qr_path, f"qr_{session_id}_{int(time.time())}")
             if url:
                 sessions[session_id]['qrUrl'] = url
                 sessions[session_id]['status'] = 'waiting_scan'
         
-        # Cek apakah sudah connected
-        out, _ = run_cmd(f"docker logs {container} --tail 5 2>/dev/null")
-        if 'WhatsApp siap' in out:
-            sessions[session_id]['status'] = 'connected'
-            print(f"[{session_id}] WhatsApp connected!")
-            break
+        # Cek status dari container
+        run_cmd(f"docker cp {container}:/app/wa_status.json {status_file} 2>/dev/null")
+        if os.path.exists(status_file):
+            try:
+                with open(status_file) as f:
+                    status_data = json.load(f)
+                status = status_data.get('status')
+                if status == 'connected':
+                    sessions[session_id]['status'] = 'connected'
+                    print(f"[{session_id}] WhatsApp connected!")
+                    break
+                elif status == 'blasting':
+                    sessions[session_id].update({
+                        'status': 'blasting',
+                        'sent': status_data.get('sent', 0),
+                        'total': status_data.get('total', 0)
+                    })
+                elif status == 'done':
+                    sessions[session_id].update({
+                        'status': 'done',
+                        'sent': status_data.get('sent', 0),
+                        'failed': status_data.get('failed', 0)
+                    })
+                    break
+            except: pass
         
-        if i == 0 or i % 6 == 0:
+        if i % 6 == 0:
             print(f"[{session_id}] Waiting for QR scan... ({i*5}s)")
 
 @app.route('/health', methods=['GET'])
 def health():
     return jsonify({'status': 'ok', 'version': '1.0'})
+
+@app.route('/get-qr', methods=['GET'])
+def get_qr():
+    """Ambil QR image sebagai base64"""
+    if not verify_secret(request):
+        return jsonify({'error': 'Unauthorized'}), 401
+    
+    session_id = request.args.get('sessionId')
+    if not session_id or session_id not in sessions:
+        return jsonify({'error': 'Session tidak ditemukan'}), 404
+    
+    sess = sessions[session_id]
+    container = sess['container']
+    qr_path = f"/tmp/wa_qr_{session_id}.png"
+    
+    run_cmd(f"docker cp {container}:/app/wa_qr.png {qr_path} 2>/dev/null")
+    
+    if os.path.exists(qr_path):
+        import base64
+        with open(qr_path, 'rb') as f:
+            b64 = base64.b64encode(f.read()).decode()
+        return jsonify({
+            'success': True,
+            'qr': f"data:image/png;base64,{b64}",
+            'status': sess.get('status')
+        })
+    
+    return jsonify({'error': 'QR belum tersedia', 'status': sess.get('status')})
 
 @app.route('/connect', methods=['POST'])
 def connect_wa():
@@ -113,14 +162,19 @@ def connect_wa():
     with open(contacts_path, 'w') as f:
         f.write("nama,nomor\n")
     
-    # Jalankan container baru
+    # Copy wa_standby.py ke tmp
+    standby_src = f"{WORKSPACE}/prisilblast/wa_standby.py"
+    
+    # Jalankan container baru dengan wa_standby.py
     cmd = f"""docker run -d \
         --name {container} \
         --network host \
         -v {volume}:/app/wa_session \
         -v {contacts_path}:/app/contacts.csv \
-        -e LOG_FILE=/tmp/blast_log_{session_id}.json \
-        {BLAST_IMAGE}"""
+        -v /tmp:/tmp \
+        -v {standby_src}:/app/wa_standby.py \
+        -e SESSION_DIR=/app/wa_session \
+        {BLAST_IMAGE} python3 -u /app/wa_standby.py"""
     
     out, code = run_cmd(cmd)
     if code != 0:
@@ -217,14 +271,15 @@ def start_blast():
     sess = sessions[session_id]
     container = sess['container']
     
-    # Set template di container via env
-    template_path = f"/tmp/template_{session_id}.txt"
-    with open(template_path, 'w', encoding='utf-8') as f:
-        f.write(template)
-    run_cmd(f"docker cp {template_path} {container}:/app/template.txt")
-    
-    # Restart container dengan blast mode
-    run_cmd(f"docker restart {container}")
+    # Kirim command blast via file
+    cmd_file = f"/tmp/blast_command.json"
+    with open(cmd_file, 'w') as f:
+        json.dump({
+            'action': 'blast',
+            'template': template,
+            'contacts': '/app/contacts.csv'
+        }, f)
+    run_cmd(f"docker cp {cmd_file} {container}:/app/blast_command.json")
     
     sess['status'] = 'blasting'
     sess['sent'] = 0
@@ -309,4 +364,4 @@ def pause_blast():
 
 if __name__ == '__main__':
     print(f"🚀 PrisilBlast Manager running on port {PORT}")
-    app.run(host='0.0.0.0', port=PORT, debug=False, threaded=True)
+    app.run(host='0.0.0.0', port=PORT, debug=False, threaded=True, use_reloader=False)

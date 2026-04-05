@@ -191,6 +191,7 @@
         const data = await res.json();
         if (data.success) {
           sessionId = data.sessionId;
+          localStorage.setItem('pb_sessionId', sessionId);
           document.getElementById('qrArea').style.display = 'block';
           document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-waiting">⏳ Menunggu Scan QR</span>';
           pollQR();
@@ -203,39 +204,59 @@
     }
 
     async function pollQR() {
-      const interval = setInterval(async () => {
+      // Ambil QR tiap 5 detik
+      const qrInterval = setInterval(async () => {
+        try {
+          const res = await fetch('/api/get-qr?sessionId=' + sessionId, {
+            headers: { 'Authorization': 'Bearer ' + token }
+          });
+          const data = await res.json();
+          if (data.qr) {
+            document.getElementById('qrImg').src = data.qr;
+          }
+          if (data.status === 'connected' || data.status === 'blasting' || data.status === 'standby') {
+            clearInterval(qrInterval);
+            document.getElementById('qrArea').style.display = 'none';
+            document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-connected">✅ Terhubung</span>';
+          }
+        } catch(e) {}
+      }, 5000);
+
+      // Cek status connected
+      const statusInterval = setInterval(async () => {
         try {
           const res = await fetch('/api/qr-status?sessionId=' + sessionId, {
             headers: { 'Authorization': 'Bearer ' + token }
           });
           const data = await res.json();
-          if (data.qrUrl) {
-            document.getElementById('qrImg').src = data.qrUrl;
-          }
           if (data.status === 'connected') {
-            clearInterval(interval);
+            clearInterval(statusInterval);
+            clearInterval(qrInterval);
             document.getElementById('qrArea').style.display = 'none';
-            document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-connected">✅ Terhubung</span>';
+            document.getElementById('waStatus').innerHTML = '<span class="status-badge badge-connected">✅ Terhubung — Siap Blast!</span>';
           }
         } catch(e) {}
-      }, 3000);
+      }, 5000);
     }
 
     async function uploadCSV() {
       const file = document.getElementById('csvFile').files[0];
       if (!file) return alert('Pilih file CSV dulu!');
-
-      const formData = new FormData();
-      formData.append('csv', file);
+      if (!sessionId) return alert('Hubungkan WhatsApp dulu!');
 
       const statusEl = document.getElementById('csvStatus');
       statusEl.textContent = '📤 Mengupload...';
+      statusEl.style.color = '#888';
 
       try {
-        const res = await fetch('/api/upload-contacts', {
+        const csvText = await file.text();
+        const res = await fetch('/api/upload-contacts?sessionId=' + sessionId, {
           method: 'POST',
-          headers: { 'Authorization': 'Bearer ' + token },
-          body: formData
+          headers: { 
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'text/plain'
+          },
+          body: csvText
         });
         const data = await res.json();
         if (data.success) {

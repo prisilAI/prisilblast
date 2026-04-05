@@ -105,9 +105,36 @@
         </div>
       </div>
 
-      <a href="https://lynk.id/prisilai" target="_blank" class="btn-lynk" id="btnLynk">
-        💳 Bayar Rp49.000 via Lynk.id →
-      </a>
+      <!-- Info Rekening -->
+      <div style="background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.1); border-radius:14px; padding:20px; margin-bottom:16px;">
+        <h4 style="font-size:0.95rem; margin-bottom:16px; color:#94a3b8;">💳 Informasi Pembayaran</h4>
+        
+        <div style="display:flex; flex-direction:column; gap:12px;">
+          <!-- BCA -->
+          <div style="background:rgba(0,98,255,0.08); border:1px solid rgba(0,98,255,0.25); border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.75rem; color:#60a5fa; font-weight:700; margin-bottom:4px;">🏦 BCA</div>
+              <div style="font-weight:700; font-size:1rem; letter-spacing:1px;">1771856751</div>
+              <div style="color:#94a3b8; font-size:0.8rem;">Aldo Berry Catur Santoso</div>
+            </div>
+            <button onclick="copyText('1771856751', this)" style="background:rgba(0,98,255,0.2); border:1px solid rgba(0,98,255,0.4); color:#60a5fa; padding:6px 14px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:600;">Salin</button>
+          </div>
+          
+          <!-- DANA -->
+          <div style="background:rgba(0,180,255,0.08); border:1px solid rgba(0,180,255,0.25); border-radius:10px; padding:14px; display:flex; justify-content:space-between; align-items:center;">
+            <div>
+              <div style="font-size:0.75rem; color:#38bdf8; font-weight:700; margin-bottom:4px;">💙 DANA</div>
+              <div style="font-weight:700; font-size:1rem; letter-spacing:1px;">088235521167</div>
+              <div style="color:#94a3b8; font-size:0.8rem;">Aldo Berry Catur Santoso</div>
+            </div>
+            <button onclick="copyText('088235521167', this)" style="background:rgba(0,180,255,0.2); border:1px solid rgba(0,180,255,0.4); color:#38bdf8; padding:6px 14px; border-radius:8px; cursor:pointer; font-size:0.8rem; font-weight:600;">Salin</button>
+          </div>
+        </div>
+
+        <div style="margin-top:14px; padding:10px 14px; background:rgba(234,179,8,0.08); border:1px solid rgba(234,179,8,0.2); border-radius:8px; color:#fbbf24; font-size:0.8rem;">
+          ⚠️ Transfer sesuai nominal paket yang dipilih (<span id="nominalInfo">Rp49.000</span>)
+        </div>
+      </div>
 
       <div class="divider"><hr/><span>Sudah bayar? Submit di sini</span><hr/></div>
 
@@ -137,13 +164,21 @@
     const email = localStorage.getItem('pb_email');
     if (email) document.getElementById('emailInput').value = email;
 
+    function copyText(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        const orig = btn.textContent;
+        btn.textContent = '✓ Disalin!';
+        setTimeout(() => btn.textContent = orig, 2000);
+      });
+    }
+
     function selectPlan(plan, price) {
       selectedPlan = plan;
       document.querySelectorAll('.plan').forEach(p => p.classList.remove('active'));
       event.currentTarget.classList.add('active');
       const priceNum = plan === 'starter' ? '49.000' : '149.000';
       document.getElementById('selectedPriceText').textContent = `Rp${priceNum}`;
-      document.getElementById('btnLynk').textContent = `💳 Bayar Rp${priceNum} via Lynk.id →`;
+      document.getElementById('nominalInfo').textContent = `Rp${priceNum}`;
       document.getElementById('selectedPlanInput').value = `${plan === 'starter' ? 'Starter' : 'Pro'} - Rp${priceNum}`;
     }
 

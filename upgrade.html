@@ -147,8 +147,12 @@
         <input type="email" id="emailInput" placeholder="email@kamu.com"/>
       </div>
       <div class="form-group">
-        <label>Nomor Referensi / Bukti Transfer</label>
-        <input type="text" id="refInput" placeholder="Contoh: TRF2026040512345"/>
+        <label>Nomor Transaksi / ID Transfer</label>
+        <input type="text" id="refInput" placeholder="Contoh: TRF2026040512345 atau DANA20260405XXX"/>
+        <div style="color:#64748b; font-size:0.78rem; margin-top:6px; line-height:1.6;">
+          📌 Cari di: <strong>BCA</strong> → m-Banking → Mutasi → Nomor Transaksi &nbsp;|&nbsp; 
+          <strong>DANA</strong> → Riwayat → Detail Transaksi → ID Transaksi
+        </div>
       </div>
       <button class="btn-submit" onclick="submitPayment()">✅ Submit Bukti Pembayaran</button>
       <div class="alert alert-success" id="alertOk"></div>

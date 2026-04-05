@@ -115,12 +115,37 @@
     <!-- Upload Kontak -->
     <div class="panel">
       <h2>📋 Upload Kontak</h2>
-      <div class="form-group">
-        <label>File CSV (kolom: nama, nomor)</label>
-        <input type="file" id="csvFile" accept=".csv"/>
-        <div class="hint">Format: baris pertama header atau langsung data. Kolom 1=nama, Kolom 2=nomor WA</div>
+      
+      <!-- Tab pilihan -->
+      <div style="display:flex; gap:8px; margin-bottom:20px;">
+        <button class="btn btn-green" id="tabSheet" onclick="switchTab('sheet')" style="font-size:0.85rem;">🔗 Google Sheet</button>
+        <button class="btn btn-outline" id="tabCSV" onclick="switchTab('csv')" style="font-size:0.85rem;">📁 Upload CSV</button>
       </div>
-      <button class="btn btn-green" onclick="uploadCSV()">📤 Upload Kontak</button>
+
+      <!-- Tab Google Sheet -->
+      <div id="panelSheet">
+        <div class="form-group">
+          <label>Link Google Sheet</label>
+          <input type="text" id="sheetUrl" placeholder="https://docs.google.com/spreadsheets/d/..."/>
+          <div class="hint" style="color:#f39c12;">
+            ⚠️ <strong>Penting:</strong> Pastikan Google Sheet sudah diatur <strong>"Siapa saja yang memiliki link dapat melihat"</strong><br>
+            Caranya: Klik <strong>Bagikan → Ubah ke siapa saja memiliki link → Penampil → Selesai</strong>
+          </div>
+          <div class="hint" style="margin-top:8px;">Format kolom: Kolom A = Nama, Kolom B = Nomor WA</div>
+        </div>
+        <button class="btn btn-green" onclick="uploadFromSheet()">🔗 Import dari Sheet</button>
+      </div>
+
+      <!-- Tab CSV -->
+      <div id="panelCSV" style="display:none;">
+        <div class="form-group">
+          <label>File CSV (kolom: nama, nomor)</label>
+          <input type="file" id="csvFile" accept=".csv"/>
+          <div class="hint">Format: Kolom 1=nama, Kolom 2=nomor WA</div>
+        </div>
+        <button class="btn btn-green" onclick="uploadCSV()">📤 Upload CSV</button>
+      </div>
+
       <div id="csvStatus" style="margin-top:12px; color:#888; font-size:0.9rem;"></div>
     </div>
 
@@ -237,6 +262,73 @@
           }
         } catch(e) {}
       }, 5000);
+    }
+
+    function switchTab(tab) {
+      if (tab === 'sheet') {
+        document.getElementById('panelSheet').style.display = 'block';
+        document.getElementById('panelCSV').style.display = 'none';
+        document.getElementById('tabSheet').className = 'btn btn-green';
+        document.getElementById('tabCSV').className = 'btn btn-outline';
+      } else {
+        document.getElementById('panelSheet').style.display = 'none';
+        document.getElementById('panelCSV').style.display = 'block';
+        document.getElementById('tabSheet').className = 'btn btn-outline';
+        document.getElementById('tabCSV').className = 'btn btn-green';
+      }
+    }
+
+    async function uploadFromSheet() {
+      const sheetUrl = document.getElementById('sheetUrl').value.trim();
+      if (!sheetUrl) return alert('Masukkan link Google Sheet dulu!');
+      if (!sessionId) return alert('Hubungkan WhatsApp dulu!');
+
+      const statusEl = document.getElementById('csvStatus');
+      statusEl.textContent = '⏳ Mengambil data dari Google Sheet...';
+      statusEl.style.color = '#f39c12';
+
+      // Extract sheet ID dari URL
+      const match = sheetUrl.match(/\/d\/([a-zA-Z0-9-_]+)/);
+      if (!match) {
+        statusEl.textContent = '❌ Link Google Sheet tidak valid!';
+        statusEl.style.color = '#e74c3c';
+        return;
+      }
+      const sheetId = match[1];
+      const csvUrl = `https://docs.google.com/spreadsheets/d/${sheetId}/export?format=csv`;
+
+      try {
+        // Download CSV dari Google Sheet
+        const sheetRes = await fetch(csvUrl);
+        if (!sheetRes.ok) {
+          statusEl.textContent = '❌ Gagal akses Sheet! Pastikan sudah diatur "Siapa saja yang memiliki link".';
+          statusEl.style.color = '#e74c3c';
+          return;
+        }
+        const csvText = await sheetRes.text();
+
+        // Upload ke VPS
+        const res = await fetch('/api/upload-contacts?sessionId=' + sessionId, {
+          method: 'POST',
+          headers: { 
+            'Authorization': 'Bearer ' + token,
+            'Content-Type': 'text/plain'
+          },
+          body: csvText
+        });
+        const data = await res.json();
+        if (data.success) {
+          statusEl.textContent = `✅ ${data.total} kontak berhasil diimport dari Google Sheet!`;
+          statusEl.style.color = '#25D366';
+          document.getElementById('statTotal').textContent = data.total;
+        } else {
+          statusEl.textContent = '❌ ' + (data.error || 'Gagal upload');
+          statusEl.style.color = '#e74c3c';
+        }
+      } catch(e) {
+        statusEl.textContent = '❌ Error: ' + e.message + '. Pastikan Sheet sudah public!';
+        statusEl.style.color = '#e74c3c';
+      }
     }
 
     async function uploadCSV() {

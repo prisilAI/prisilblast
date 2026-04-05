@@ -80,7 +80,27 @@ def run():
                     break
                 # Screenshot QR setiap 15 detik
                 if i % 3 == 0:
+                    # Screenshot full page dulu
                     page.screenshot(path=QR_PATH)
+                    # Crop QR code saja pakai canvas JS
+                    try:
+                        qr_b64 = page.evaluate("""
+                            () => {
+                                const canvas = document.querySelector('canvas');
+                                if (canvas) return canvas.toDataURL('image/png');
+                                // Coba ambil dari img QR
+                                const qrImg = document.querySelector('[data-testid="qrcode"] canvas, canvas[aria-label], .landing-main canvas');
+                                if (qrImg) return qrImg.toDataURL('image/png');
+                                return null;
+                            }
+                        """)
+                        if qr_b64 and qr_b64.startswith('data:image'):
+                            import base64
+                            img_data = base64.b64decode(qr_b64.split(',')[1])
+                            with open(QR_PATH, 'wb') as f:
+                                f.write(img_data)
+                    except:
+                        pass  # fallback ke screenshot full
                     save_status('waiting_qr', {'qr_updated': time.time()})
             except Exception as e:
                 print(f"[WARN] {e}", flush=True)
